@@ -5,13 +5,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from 'zod'
 import { getMailClient } from "../lib/mail";
 import nodemailer from 'nodemailer'
-
-import dayjs from "dayjs";
-import localizedFormat from 'dayjs/plugin/localizedFormat'
-import 'dayjs/locale/pt-br'
-
-dayjs.locale('pt-br')
-dayjs.extend(localizedFormat)
+import { dayjs } from "../lib/dayjs";
 
 export async function createTrip(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post('/trips', {
@@ -25,7 +19,7 @@ export async function createTrip(app: FastifyInstance) {
         emails_to_invite: z.array(z.string().email())
       }),
     }
-  },async (request, response) => {
+  },async (request, reply) => {
     const { 
       destination, 
       starts_at, 
@@ -102,6 +96,6 @@ export async function createTrip(app: FastifyInstance) {
 
     console.log(nodemailer.getTestMessageUrl(message))
 
-    return response.send("success!").status(201)
+    return reply.send("success!").status(201)
   })
 }
